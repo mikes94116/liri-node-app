@@ -4,10 +4,11 @@ require("dotenv").config();
 //project vars
 var keys = require("./keys.js");
 var fs = require("fs");
-var Spotify = require('spotify-web-api-node'); // node-spotify-api
+var Spotify = require('node-spotify-api'); 
 var spotify = new Spotify(keys.spotify);
 var request = require("request");
-var movieName = process.argv[3];
+var moment = require('moment');
+var findThis = process.argv[3];
 var liriReturn = process.argv[2];
 
 
@@ -22,9 +23,9 @@ switch (liriReturn) {
         movieThis();
         break;
 
-    // case "concert-this":
-    //     concertThis();
-    //     break;
+    case "concert-this":
+        concertThis();
+        break;
 
     case "do-what-it-says":
         doWhatItSays();
@@ -34,6 +35,7 @@ switch (liriReturn) {
     default: console.log("\n" + "type any command after 'node liri.js': " + "\n" +
         "spotify-this-song 'any song title' " + "\n" +
         "movie-this 'any movie title' " + "\n" +
+        "concert-this 'any band to get concert info' " + "\n" +
         "do-what-it-says " + "\n" +
         "Use quotes for multiword titles!");
 };
@@ -41,14 +43,18 @@ switch (liriReturn) {
 //command 2 spotify this song
 // need artist, song name, preview, album
 function spotifyThisSong(trackName) {
+
     var trackName = process.argv[3];
+
     if (!trackName) {
         trackName = "I Want it That Way";
     };
+
     songRequest = trackName;
     spotify.search({
         type: "track",
         query: songRequest
+
     },
         function (err, data) {
             if (!err) {
@@ -76,7 +82,7 @@ function spotifyThisSong(trackName) {
 function movieThis() {
 
     //using movieName from var list at top
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+    var queryUrl = "http://www.omdbapi.com/?t=" + findThis + "&y=&plot=short&apikey=trilogy";
 
     request(queryUrl, function (error, response, body) {
 
@@ -103,12 +109,28 @@ function movieThis() {
     });
 };
 
-// function concertThis() {
 
+function concertThis() {
 
+        var queryURL = "https://rest.bandsintown.com/artists/" + findThis + "/events?app_id=codingbootcamp";
 
+        request(queryURL, function (error, response, body) {
+    
+        if (!error && response.statusCode === 200) {
+            var result  =  JSON.parse(body)[0];
+            var concertResults = 
+                "Venue name: " + result.venue.name + "\n" +
+                "Venue location: " + result.venue.city + "\n" +
+                "Date of Event: " +  moment(result.datetime).format("MM/DD/YYYY") + "\n"
+            
+            console.log(concertResults);
 
-// }
+        } else {
+            console.log("error: " + err);
+            return;
+        };
+    });
+};
 
 //command 4 do-what-it-says
 // This block of code creates a file called "random.txt"
