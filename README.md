@@ -18,6 +18,8 @@ All results are returned in the command line, but also into a separate text file
 
 Technologies used: Javascript, Node.js, Moment.js, Bandsintown API, Spotify API, OMDb API
 
+To see it in action, click on any of the links below to be directed to a video that shows how it works.
+
 Spotify this song...
 https://drive.google.com/file/d/1hHGM4cK9xfoUWCTPHIB64GGbMDXZN5o8/view
 
